@@ -49,22 +49,23 @@ Every issue and PR belongs to exactly one milestone. A milestone is closed only 
 
 ---
 
-## 3. Branches — one per task or subtask-as-issue, typed by kind of work
+## 3. Branches — one per task or subtask-as-issue, named by phase
 
-Every task issue and every subtask-that-is-its-own-issue gets its own branch off `main` when work starts on it. Branch name encodes the *type* of work (feature/fix/chore/docs) plus a reference back to the issue, so any branch is traceable to exactly one issue without opening it:
+Every task issue and every subtask-that-is-its-own-issue gets its own branch off `main` when work starts on it. Branch name encodes the *phase* the issue belongs to, so any branch is traceable to where it sits in the phase-by-phase build plan:
 
 ```
-<type>/<issue-number>-<short-desc>
+phase-<N>/<short-desc>
 ```
 
-| Type prefix | Used for | Example |
+| Example | Issue | Phase |
 |---|---|---|
-| `feature/` | New functionality (`type:feature` issues) | `feature/42-property-search-filters` |
-| `fix/` | Bug fixes (`type:bug` issues) | `fix/57-price-filter-off-by-one` |
-| `chore/` | Tooling/config/deps (`type:chore` issues) | `chore/12-add-eslint-config` |
-| `docs/` | Doc-only changes (`type:docs` issues) | `docs/8-update-api-contract-lat-lng` |
+| `phase-1/auth-register` | #3 — Implement auth: register/login/logout + isAdmin flag | Phase 1 |
+| `phase-1/seed-data` | #4 — Add seed script for placeholder Property data | Phase 1 |
+| `phase-2/search-filters` | (future) property search filters | Phase 2 |
 
 - One branch → one issue → one PR, as the default. A branch spanning multiple issues is a sign the issues should have been one task to begin with, or the branch should be split.
+- The issue's `phase-N` label (§5) sets the branch's phase prefix — keep them in sync; if an issue's phase changes, rename the branch or note the mismatch in the PR.
+- The kind of change (feature/fix/chore/docs) is tracked via the issue's `type:*` label (§5), not encoded in the branch name.
 - Branches are deleted after merge (GitHub's "auto-delete head branches" setting should be on).
 - No long-lived branches beyond `main` — no persistent `develop`/`staging` branch unless that's explicitly requested later; this is small enough to trunk-base off `main` with short-lived task branches.
 
@@ -75,7 +76,7 @@ Every task issue and every subtask-that-is-its-own-issue gets its own branch off
 - One issue per task (and per subtask-issue where a subtask is substantial enough per §2's rule of thumb) — e.g. "Add GET /api/properties with filters/sort/pagination" is one task issue in the Phase 2 milestone, linked to its sprint/epic.
 - Issue title: short imperative.
 - Issue body must reference which doc/section it implements (e.g. `API_CONTRACT.md §1`) and which epic it's part of (`Part of #<epic-number>`), so scope is traceable back to an agreed spec, not invented ad hoc.
-- Labels (see §5) applied at creation, including a `type:*` label so the branch prefix (§3) is unambiguous.
+- Labels (see §5) applied at creation, including a `phase-N` label so the branch's `phase-N/...` prefix (§3) is unambiguous, and a `type:*` label to categorize the kind of change.
 
 ### Issue template (structure to follow, not a literal GitHub `.github/ISSUE_TEMPLATE` requirement unless you want one committed)
 ```
@@ -99,12 +100,12 @@ Every task issue and every subtask-that-is-its-own-issue gets its own branch off
 
 | Label | Meaning |
 |---|---|
-| `phase-0` … `phase-5` | Which roadmap phase this belongs to (redundant with milestone, but filterable in list views) |
+| `phase-0` … `phase-5` | Which roadmap phase this belongs to; also sets the issue's `phase-N/...` branch prefix (§3) — not just a milestone filter |
 | `type:epic` | A sprint-level issue containing a checklist of task issues (see §2) |
-| `type:feature` | New functionality — branches as `feature/...` |
-| `type:bug` | Something built doesn't match its spec — branches as `fix/...` |
-| `type:chore` | Tooling, deps, config — no product behavior change — branches as `chore/...` |
-| `type:docs` | Changes to the planning docs themselves — branches as `docs/...` |
+| `type:feature` | New functionality |
+| `type:bug` | Something built doesn't match its spec |
+| `type:chore` | Tooling, deps, config — no product behavior change |
+| `type:docs` | Changes to the planning docs themselves |
 | `scope-risk` | Flagged during work as touching something in the out-of-scope list (`PRD.md` §4 / `ROADMAP.md` parking lot) — needs a decision before proceeding, not a silent build |
 | `blocked` | Can't proceed — reason must be in a comment |
 
