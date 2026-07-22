@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPublishedProperty } from "@/lib/properties";
 import { errorResponse } from "@/lib/api-errors";
 
 export async function GET(
@@ -8,9 +8,7 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const property = await prisma.property.findFirst({
-    where: { id, status: "published" },
-  });
+  const property = await getPublishedProperty(id);
 
   if (!property) {
     return errorResponse(404, "not_found", "Property not found.");
