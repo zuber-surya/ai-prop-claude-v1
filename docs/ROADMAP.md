@@ -49,10 +49,10 @@ All Phase 0 open decisions are resolved. All docs are checked off above — **Ph
 
 Build against `UI_REFERENCE.md` §3's screen-to-route mapping (Stitch designs + strip-lists), not from scratch.
 
-- [ ] `/` landing page with search bar + featured listings
-- [ ] `/search` — filters + results list (grid/list/map toggle; map view uses Leaflet.js + OSM tiles, plots `Property.latitude`/`longitude`)
-- [ ] `/property/[id]` — detail page
-- [ ] `/login`, `/register`
+- [x] `/` landing page with search bar + featured listings
+- [x] `/search` — filters + results list (grid/list/map toggle; map view uses Leaflet.js + OSM tiles, plots `Property.latitude`/`longitude`)
+- [x] `/property/[id]` — detail page
+- [x] `/login`, `/register`
 
 **Gate:** a visitor with no login can browse, search, and view property details end-to-end against seeded data, **and** `/reports/phase-2-public-site/REPORT.md` + screenshots exist per `REPORTING.md`.
 
