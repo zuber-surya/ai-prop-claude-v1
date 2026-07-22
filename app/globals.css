@@ -32,6 +32,7 @@
   --color-error: #ba1a1a;
   --color-on-error: #ffffff;
   --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
 }
 
 @theme inline {
@@ -54,6 +55,7 @@
   --color-error: var(--color-error);
   --color-on-error: var(--color-on-error);
   --color-error-container: var(--color-error-container);
+  --color-on-error-container: var(--color-on-error-container);
 
   --font-sans: var(--font-inter);
 
