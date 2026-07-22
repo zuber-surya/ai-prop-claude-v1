@@ -34,10 +34,10 @@ All Phase 0 open decisions are resolved. All docs are checked off above — **Ph
 
 ## Phase 1 — Data model + auth
 
-- [ ] Prisma schema: `Property`, `User`, `ChatConversation`/`ChatMessage` (for Q&A history, no lead linkage)
-- [ ] Postgres set up, migrations run cleanly from scratch
+- [x] Prisma schema: `Property`, `User`, `ChatConversation`/`ChatMessage` (for Q&A history, no lead linkage)
+- [x] Postgres set up, migrations run cleanly from scratch
 - [x] Auth: register/login/logout for `user` role, `isAdmin` flag
-- [ ] Seed script populating `Property` with placeholder/fixture data (not a real listings import) — see `SCHEMA.md` §note on seeding
+- [x] Seed script populating `Property` with placeholder/fixture data (not a real listings import) — see `SCHEMA.md` §note on seeding
 
 **Build-order note:** the public site and admin CRUD (Phases 2 and 4) can be built against a temporary mock JSON layer — static fixture responses matching `API_CONTRACT.md` exactly — before the real Prisma/Postgres queries are wired up. This lets frontend work start without waiting on the DB layer. The mock layer must be swapped for real DB-backed routes before a phase's gate is considered met; a route still returning static fixture JSON is not "done" per `TESTING_STRATEGY_AND_DOD.md`.
 
