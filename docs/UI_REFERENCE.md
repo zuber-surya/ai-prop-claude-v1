@@ -26,7 +26,7 @@ Each `code.html` is real semantic markup — implementable directly, not just a 
 
 | Token category | Source | Notes |
 |---|---|---|
-| Colors | `DESIGN.md` front-matter `colors:` block | Primary `#0052CC` (or `#003d9b` per the front-matter primary value — reconcile the two; front-matter is likely the more precise source, prose section rounds it) for core actions; Secondary `#8E44AD`/`#873da6` reserved **only** for AI-driven elements (match scores, chat widget, AI action buttons) — never for standard UI, per DESIGN.md's own rule |
+| Colors | `DESIGN.md` front-matter `colors:` block | Primary `#003d9b` (resolved — see §6) for core actions; Secondary `#8E44AD`/`#873da6` reserved **only** for AI-driven elements (match scores, chat widget, AI action buttons) — never for standard UI, per DESIGN.md's own rule |
 | Typography | `DESIGN.md` `typography:` block | Inter throughout; display/headline/body/label scale as specified |
 | Spacing | `DESIGN.md` `spacing:` block | 8px base unit; `xl` (40px) between page sections, `md`/`lg` (16/24px) inside cards |
 | Radius | `DESIGN.md` `rounded:` block | 8px (0.5rem) standard components, ~10px for cards |
@@ -74,6 +74,6 @@ If a future scope expansion resurrects any of these, this doc is where to un-arc
 
 ---
 
-## 6. Open item
+## 6. Primary blue — resolved
 
-The two shades of Primary blue in `DESIGN.md` (`#003d9b` in the front-matter `colors.primary` vs. `#0052CC` named in the prose "Colors" section) should be reconciled to one value before `tailwind.config.js` is written — pick one and update this doc, don't carry both forward as ambiguous.
+**Decided: `#003d9b`** — the front-matter `colors.primary` value in `DESIGN.md`. The `#0052CC` figure named in `DESIGN.md`'s prose "Colors" section is actually `primary-container` (a lighter tonal variant per the front-matter), not primary — the prose section conflated the two. Use `#003d9b` for primary buttons, nav/links, and focus rings when `tailwind.config.js` is written; `#0052CC` remains available as the `primary-container` token for lighter tonal surfaces if needed.

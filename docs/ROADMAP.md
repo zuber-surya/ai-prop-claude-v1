@@ -26,9 +26,9 @@ Rule: **do not start a phase until the previous phase's gate is checked off.** C
 1. **LLM API** — Anthropic API direct. ✅ Decided.
 2. **Map provider** — OpenStreetMap tiles + Leaflet.js (open-source, free, no API key). ✅ Decided.
 3. **Seed data** — placeholder/fixture data for now (not a real listings import). ✅ Decided.
-4. **Primary blue shade reconciliation** (`UI_REFERENCE.md` §6) — `#003d9b` vs `#0052CC` — pick one before `tailwind.config.js` is written. Small, non-blocking for docs; resolve during Phase 1/2 setup.
+4. **Primary blue shade** — ✅ Decided: `#003d9b` (see `UI_REFERENCE.md` §6).
 
-All Phase 0 open decisions are resolved (item 4 is a minor implementation detail, not a planning blocker). All docs are checked off above — **Phase 0 is exited.**
+All Phase 0 open decisions are resolved. All docs are checked off above — **Phase 0 is exited.**
 
 ---
 
