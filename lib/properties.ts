@@ -63,7 +63,11 @@ export async function listPublishedProperties(
     where.type = filters.type;
   }
   if (filters.bedrooms && filters.bedrooms > 0) {
-    where.bedrooms = filters.bedrooms;
+    // "3 bedrooms" in a property search almost always means "3 or more" -
+    // API_CONTRACT.md §1 doesn't specify exact-match vs. minimum, so this
+    // reads bedrooms as a minimum (gte), matching standard real-estate
+    // search UX rather than requiring an exact match.
+    where.bedrooms = { gte: filters.bedrooms };
   }
   if (
     (filters.minPrice != null && Number.isFinite(filters.minPrice)) ||
