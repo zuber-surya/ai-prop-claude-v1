@@ -54,13 +54,13 @@ describe("GET /api/properties", () => {
     expect(json).toMatchObject({ page: 1, pageSize: 20, total: 1 });
   });
 
-  it("applies type, bedrooms, and price range filters", async () => {
+  it("applies type, bedrooms (as a minimum), and price range filters", async () => {
     await GET(makeRequest("?type=villa&bedrooms=3&minPrice=1000000&maxPrice=5000000"));
     const call = vi.mocked(prisma.property.findMany).mock.calls[0][0]!;
     expect(call.where).toMatchObject({
       status: "published",
       type: "villa",
-      bedrooms: 3,
+      bedrooms: { gte: 3 },
       price: { gte: 1000000, lte: 5000000 },
     });
   });
