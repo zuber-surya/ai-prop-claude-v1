@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Build Progress — Property Website MVP</title>
+<meta name="color-scheme" content="light dark" />
+<style>
+  :root {
+    --surface: #eef2f1;
+    --surface-raised: #ffffff;
+    --surface-sunken: #e4e9e8;
+    --ink: #16232c;
+    --ink-secondary: #4c5d66;
+    --ink-muted: #8996a0;
+    --border: #d6dedd;
+    --border-strong: #c1cbc9;
+    --accent: #0e7a8c;
+    --accent-ink: #ffffff;
+    --accent-soft: #e3f1f2;
+    --good: #2f8f5b;
+    --good-soft: #e4f3ea;
+    --warn: #a8700f;
+    --warn-soft: #fbf0de;
+    --neutral-state: #66727b;
+    --neutral-state-soft: #eceef0;
+    --reference: #7a6d92;
+    --reference-soft: #efebf3;
+    --focus-ring: #0e7a8c;
+
+    --font-sans: -apple-system, "Segoe UI", "Helvetica Neue", Roboto, Arial, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", "SF Mono", "JetBrains Mono", Consolas, monospace;
+
+    --fs-eyebrow: 0.72rem;
+    --fs-caption: 0.8125rem;
+    --fs-body: 0.9375rem;
+    --fs-card-title: 1.0625rem;
+    --fs-section: 1.3rem;
+    --fs-stat: 2rem;
+    --fs-page-title: 1.75rem;
+
+    --radius-sm: 4px;
+    --radius-md: 6px;
+  }
+
+  :root[data-theme="dark"] {
+    --surface: #111820;
+    --surface-raised: #1a2229;
+    --surface-sunken: #0d1319;
+    --ink: #e7ecee;
+    --ink-secondary: #a7b4bc;
+    --ink-muted: #6b7981;
+    --border: #29333a;
+    --border-strong: #38434b;
+    --accent: #4fc2d6;
+    --accent-ink: #05252b;
+    --accent-soft: #16333a;
+    --good: #5fbf87;
+    --good-soft: #15301e;
+    --warn: #e0a94a;
+    --warn-soft: #352910;
+    --neutral-state: #8d99a1;
+    --neutral-state-soft: #222b31;
+    --reference: #ae9ec7;
+    --reference-soft: #2a2333;
+    --focus-ring: #4fc2d6;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --surface: #111820;
+      --surface-raised: #1a2229;
+      --surface-sunken: #0d1319;
+      --ink: #e7ecee;
+      --ink-secondary: #a7b4bc;
+      --ink-muted: #6b7981;
+      --border: #29333a;
+      --border-strong: #38434b;
+      --accent: #4fc2d6;
+      --accent-ink: #05252b;
+      --accent-soft: #16333a;
+      --good: #5fbf87;
+      --good-soft: #15301e;
+      --warn: #e0a94a;
+      --warn-soft: #352910;
+      --neutral-state: #8d99a1;
+      --neutral-state-soft: #222b31;
+      --reference: #ae9ec7;
+      --reference-soft: #2a2333;
+      --focus-ring: #4fc2d6;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  code, .mono { font-family: var(--font-mono); }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  ::selection { background: var(--accent-soft); }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+  }
+
+  /* ---------- Header ---------- */
+  header.top {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow a { color: var(--ink-secondary); text-decoration: none; }
+  .eyebrow a:hover { color: var(--accent); text-decoration: underline; }
+  h1 {
+    font-size: var(--fs-page-title);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    margin: 4px 0 0;
+    text-wrap: balance;
+  }
+  .meta-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--fs-caption);
+    color: var(--ink-muted);
+  }
+  button.refresh {
+    font: inherit;
+    font-family: var(--font-sans);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 7px 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  button.refresh:hover { filter: brightness(1.06); }
+  button.refresh:disabled { opacity: 0.6; cursor: default; }
+  .spinner {
+    width: 12px; height: 12px;
+    border: 2px solid color-mix(in srgb, var(--accent-ink) 40%, transparent);
+    border-top-color: var(--accent-ink);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .is-loading .spinner { display: inline-block; }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation: none; }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #theme-toggle {
+    font: inherit;
+    font-size: var(--fs-caption);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    color: var(--ink-secondary);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    cursor: pointer;
+  }
+
+  /* ---------- Stat strip ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: var(--surface-raised);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat .n {
+    font-family: var(--font-mono);
+    font-size: var(--fs-stat);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .stat .l {
+    font-size: var(--fs-caption);
+    color: var(--ink-secondary);
+  }
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---------- Section headings ---------- */
+  h2.section-title {
+    font-size: var(--fs-section);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+  .section-sub {
+    font-size: var(--fs-caption);
+    color: var(--ink-muted);
+    margin: 0 0 16px;
+    max-width: 62ch;
+  }
+  section.block { margin-bottom: 36px; }
+
+  /* ---------- Phase ladder ---------- */
+  .ladder {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .phase-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+  }
+  .phase-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .phase-num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    color: var(--ink-muted);
+    min-width: 2.4em;
+  }
+  .phase-title {
+    font-size: var(--fs-card-title);
+    font-weight: 600;
+    flex: 1 1 auto;
+    min-width: 140px;
+  }
+  .pill {
+    font-size: var(--fs-eyebrow);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .pill.good { background: var(--good-soft); color: var(--good); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.neutral { background: var(--neutral-state-soft); color: var(--neutral-state); }
+  .pill.reference { background: var(--reference-soft); color: var(--reference); }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 10px;
+  }
+  .progress-track {
+    flex: 1 1 auto;
+    height: 6px;
+    background: var(--surface-sunken);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--good);
+    border-radius: 999px;
+    transition: width 320ms ease;
+    width: 0%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .progress-fill { transition: none; }
+  }
+  .progress-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    color: var(--ink-secondary);
+    white-space: nowrap;
+  }
+
+  .issue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .issue-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-caption);
+  }
+  .issue-row:hover { background: var(--surface-sunken); }
+  .issue-state {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--ink-muted);
+    flex: none;
+  }
+  .issue-state.closed {
+    border-color: var(--good);
+    background: var(--good);
+    position: relative;
+  }
+  .issue-state.closed::after {
+    content: "";
+    position: absolute;
+    left: 3px; top: 1px;
+    width: 4px; height: 7px;
+    border-right: 2px solid var(--surface-raised);
+    border-bottom: 2px solid var(--surface-raised);
+    transform: rotate(45deg);
+  }
+  .issue-num {
+    font-family: var(--font-mono);
+    color: var(--ink-muted);
+    flex: none;
+  }
+  .issue-title {
+    color: var(--ink);
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .issue-title:hover { text-decoration: underline; }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--ink-secondary);
+    background: var(--surface-sunken);
+    border-radius: var(--radius-sm);
+    padding: 1px 6px;
+    flex: none;
+  }
+
+  .empty-note {
+    font-size: var(--fs-caption);
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  /* ---------- Gate callout ---------- */
+  .gate {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-sunken);
+    font-size: var(--fs-caption);
+    color: var(--ink-secondary);
+  }
+  .gate strong { color: var(--ink); }
+  .gate.gate-open { border-color: color-mix(in srgb, var(--warn) 40%, var(--border-strong)); }
+  .gate.gate-met { border-color: color-mix(in srgb, var(--good) 40%, var(--border-strong)); }
+
+  /* ---------- PR chain ---------- */
+  .pr-chain-wrap { margin-top: 12px; }
+  .pr-chain-label {
+    font-size: var(--fs-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+  .pr-chain {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .pr-node {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-sunken);
+    min-width: 150px;
+    flex: none;
+  }
+  .pr-node.merged { border-color: color-mix(in srgb, var(--good) 45%, var(--border-strong)); background: var(--good-soft); }
+  .pr-node.open { border-color: color-mix(in srgb, var(--warn) 45%, var(--border-strong)); background: var(--warn-soft); }
+  .pr-node .pr-ref { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; }
+  .pr-node .pr-branch { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-secondary); }
+  .pr-node .pr-title { font-size: 0.72rem; color: var(--ink-secondary); max-width: 20ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pr-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    flex: none;
+  }
+
+  /* ---------- Reference section ---------- */
+  .ref-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--ink-secondary);
+    width: 100%;
+    text-align: left;
+  }
+  .ref-toggle .caret {
+    display: inline-block;
+    transition: transform 160ms ease;
+    color: var(--ink-muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ref-toggle .caret { transition: none; }
+  }
+  .ref-toggle[aria-expanded="true"] .caret { transform: rotate(90deg); }
+  .ref-body { display: none; margin-top: 14px; }
+  .ref-body.open { display: block; }
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .ref-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 11px;
+    font-size: var(--fs-caption);
+    background: var(--surface-raised);
+    opacity: 0.85;
+  }
+  .ref-item .ref-num { font-family: var(--font-mono); color: var(--reference); margin-right: 6px; }
+
+  /* ---------- Skeleton / error ---------- */
+  .skeleton-line {
+    height: 14px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--surface-sunken) 25%, var(--border) 37%, var(--surface-sunken) 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-line { animation: none; background: var(--surface-sunken); }
+  }
+  @keyframes shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+  }
+  .error-box {
+    border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--border-strong));
+    background: var(--warn-soft);
+    color: var(--warn);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: var(--fs-caption);
+  }
+  .error-box a { color: inherit; }
+
+  footer.foot {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-caption);
+    color: var(--ink-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer.foot a { color: var(--ink-secondary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="top-row">
+      <div>
+        <div class="eyebrow">
+          <span>🏠</span>
+          <a href="https://github.com/zuber-surya/ai-prop-claude-v1" target="_blank" rel="noopener">zuber-surya/ai-prop-claude-v1</a>
+        </div>
+        <h1>Build Progress</h1>
+      </div>
+      <div class="meta-controls">
+        <span id="last-updated" class="tnum">Loading…</span>
+        <button id="theme-toggle" type="button" aria-label="Toggle color theme">◐</button>
+        <button id="refresh-btn" class="refresh" type="button">
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="refresh-label">Refresh</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="error-slot"></div>
+
+  <div id="stats" class="stats" aria-live="polite">
+    <div class="stat"><div class="skeleton-line" style="width:40%"></div></div>
+    <div class="stat"><div class="skeleton-line" style="width:60%"></div></div>
+    <div class="stat"><div class="skeleton-line" style="width:50%"></div></div>
+    <div class="stat"><div class="skeleton-line" style="width:45%"></div></div>
+  </div>
+
+  <section class="block">
+    <h2 class="section-title">Active build — MVP roadmap</h2>
+    <p class="section-sub">The six phases in <code>docs/ROADMAP.md</code>, gated in order — Claude Code won't start phase N+1 until phase N's gate is satisfied (merged PRs, not just checked-off issues).</p>
+    <div id="ladder" class="ladder">
+      <div class="phase-card"><div class="skeleton-line" style="width:100%;height:20px"></div></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <button id="ref-toggle" class="ref-toggle" type="button" aria-expanded="false" aria-controls="ref-body">
+      <span class="caret">▶</span>
+      <h2 class="section-title" style="margin:0;">Reference only — superseded CRM scope</h2>
+    </button>
+    <p class="section-sub">The older, larger-scope PropVista CRM phase plan (leads, agents, recommendations, notifications). Not scope-authoritative per <code>CLAUDE.md</code> §4a — kept here for provenance, not active work.</p>
+    <div id="ref-body" class="ref-body">
+      <div id="ref-grid" class="ref-grid"></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Data fetched live from the GitHub REST API (public, unauthenticated — 60 req/hr limit applies). No token stored, nothing written back.</span>
+    <span id="rate-limit"></span>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var OWNER = "zuber-surya";
+  var REPO = "ai-prop-claude-v1";
+  var API = "https://api.github.com/repos/" + OWNER + "/" + REPO;
+
+  // ---------- Theme toggle ----------
+  var root = document.documentElement;
+  var themeBtn = document.getElementById("theme-toggle");
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem("progress-theme"); } catch (e) {}
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  themeBtn.addEventListener("click", function () {
+    var current = root.getAttribute("data-theme");
+    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var effectiveDark = current ? current === "dark" : prefersDark;
+    var next = effectiveDark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("progress-theme", next); } catch (e) {}
+  });
+
+  // ---------- Fetch helpers ----------
+  function fetchAllPages(path) {
+    var results = [];
+    function next(url) {
+      return fetch(url, { headers: { Accept: "application/vnd.github+json" } }).then(function (res) {
+        var remaining = res.headers.get("x-ratelimit-remaining");
+        var limit = res.headers.get("x-ratelimit-limit");
+        if (remaining !== null) {
+          document.getElementById("rate-limit").textContent =
+            "GitHub API rate limit: " + remaining + " / " + limit + " remaining this hour";
+        }
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (body) {
+            var msg = (body && body.message) || (res.status + " " + res.statusText);
+            throw new Error(msg);
+          });
+        }
+        return res.json().then(function (page) {
+          results = results.concat(page);
+          var link = res.headers.get("link") || "";
+          var m = link.match(/<([^>]+)>;\s*rel="next"/);
+          if (m) return next(m[1]);
+          return results;
+        });
+      });
+    }
+    return next(path);
+  }
+
+  // ---------- Classification ----------
+  var MVP_RE = /^Phase (\d+) - /;
+  var CRM_RE = /^Phase (\d+): /;
+
+  function classify(milestone) {
+    var m1 = milestone.title.match(MVP_RE);
+    if (m1) return { group: "mvp", order: parseInt(m1[1], 10) };
+    var m2 = milestone.title.match(CRM_RE);
+    if (m2) return { group: "reference", order: parseInt(m2[1], 10) };
+    return { group: "other", order: 999 };
+  }
+
+  function phaseState(milestone, issues) {
+    if (milestone.state === "closed") return { label: "Closed", pill: "good" };
+    if (issues.length === 0) return { label: "Not started", pill: "neutral" };
+    var anyOpen = issues.some(function (i) { return i.state === "open"; });
+    var allClosed = issues.every(function (i) { return i.state === "closed"; });
+    if (allClosed) return { label: "Issues done — gate pending", pill: "warn" };
+    if (anyOpen) return { label: "In progress", pill: "warn" };
+    return { label: "Not started", pill: "neutral" };
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+    });
+  }
+
+  // ---------- PR chain builder (generic — walks base/head links to the default branch) ----------
+  function buildPrChains(prs, defaultBranch) {
+    var byHead = {};
+    prs.forEach(function (pr) { byHead[pr.head.ref] = pr; });
+    var isChainStart = {};
+    prs.forEach(function (pr) {
+      isChainStart[pr.number] = !byHead[pr.base.ref];
+    });
+    var chains = [];
+    prs.forEach(function (pr) {
+      if (!isChainStart[pr.number]) return;
+      var chain = [pr];
+      var cursorHead = pr.head.ref;
+      var guard = 0;
+      while (guard++ < 50) {
+        var found = null;
+        for (var i = 0; i < prs.length; i++) {
+          if (prs[i].base.ref === cursorHead) { found = prs[i]; break; }
+        }
+        if (!found) break;
+        chain.push(found);
+        cursorHead = found.head.ref;
+      }
+      chains.push(chain);
+    });
+    return chains;
+  }
+
+  function prNodeHtml(pr) {
+    var state = pr.merged_at ? "merged" : pr.state === "open" ? "open" : "closed";
+    return (
+      '<div class="pr-node ' + state + '">' +
+        '<span class="pr-ref">#' + pr.number + " " + (state === "merged" ? "merged" : state === "open" ? "open" : "closed") + '</span>' +
+        '<span class="pr-branch">' + escapeHtml(pr.head.ref) + '</span>' +
+        '<span class="pr-title" title="' + escapeHtml(pr.title) + '">' + escapeHtml(pr.title) + '</span>' +
+      '</div>'
+    );
+  }
+
+  function renderPrChains(container, chains, defaultBranch) {
+    if (!chains.length) return;
+    var wrap = document.createElement("div");
+    wrap.className = "pr-chain-wrap";
+    var label = document.createElement("div");
+    label.className = "pr-chain-label";
+    label.textContent = chains.length > 1 ? "Linked PRs (stacked)" : "Linked PR";
+    wrap.appendChild(label);
+    chains.forEach(function (chain) {
+      var row = document.createElement("div");
+      row.className = "pr-chain";
+      var html = '<div class="pr-node" style="background:transparent;border-style:dashed;"><span class="pr-branch">' + escapeHtml(defaultBranch) + "</span></div>";
+      chain.forEach(function (pr) {
+        html += '<span class="pr-arrow">→</span>' + prNodeHtml(pr);
+      });
+      row.innerHTML = html;
+      wrap.appendChild(row);
+    });
+    container.appendChild(wrap);
+  }
+
+  // ---------- Rendering ----------
+  function issueRowHtml(issue) {
+    var typeLabel = issue.labels.map(function (l) { return l.name || l; }).filter(function (n) { return n.indexOf("type:") === 0; })[0];
+    return (
+      '<div class="issue-row">' +
+        '<span class="issue-state' + (issue.state === "closed" ? " closed" : "") + '" aria-hidden="true"></span>' +
+        '<span class="issue-num">#' + issue.number + '</span>' +
+        '<a class="issue-title" href="' + issue.html_url + '" target="_blank" rel="noopener">' + escapeHtml(issue.title) + '</a>' +
+        (typeLabel ? '<span class="chip">' + escapeHtml(typeLabel.replace("type:", "")) + '</span>' : "") +
+      '</div>'
+    );
+  }
+
+  function renderStats(mvpMilestones, mvpIssues, allPrs) {
+    function isEpicIssue(i) { return i.labels.some(function (l) { return (l.name || l) === "type:epic"; }); }
+    var taskIssues = mvpIssues.filter(function (i) { return !isEpicIssue(i); });
+    var closed = taskIssues.filter(function (i) { return i.state === "closed"; }).length;
+    var total = taskIssues.length;
+    var openPrs = allPrs.filter(function (p) { return p.state === "open"; }).length;
+    var gatedClosed = mvpMilestones.filter(function (m) { return m.state === "closed"; }).length;
+    var openEpics = mvpIssues.filter(function (i) { return isEpicIssue(i) && i.state === "open"; }).length;
+
+    var stats = [
+      { n: total ? closed + " / " + total : "0 / 0", l: "MVP tasks closed" },
+      { n: String(openPrs), l: "Open PRs" },
+      { n: gatedClosed + " / " + mvpMilestones.length, l: "Phases gated" },
+      { n: String(openEpics), l: "Active sprints (epics)" },
+    ];
+    var el = document.getElementById("stats");
+    el.innerHTML = stats.map(function (s) {
+      return '<div class="stat"><div class="n tnum">' + s.n + '</div><div class="l">' + s.l + '</div></div>';
+    }).join("");
+  }
+
+  function renderLadder(mvpMilestones, issuesByMilestone, prsByMilestone, defaultBranch) {
+    var ladder = document.getElementById("ladder");
+    ladder.innerHTML = "";
+    mvpMilestones.sort(function (a, b) { return classify(a).order - classify(b).order; });
+
+    function isEpic(i) { return i.labels.some(function (l) { return (l.name || l) === "type:epic"; }); }
+
+    mvpMilestones.forEach(function (m) {
+      var issues = issuesByMilestone[m.number] || [];
+      // Epics are checklist containers, not work items — they normally stay
+      // open until every child task closes, so counting them would make
+      // completion look worse than it is. The progress bar and gate below
+      // track task issues only; epics still show in the list with a chip.
+      var taskIssues = issues.filter(function (i) { return !isEpic(i); });
+      var closedCount = taskIssues.filter(function (i) { return i.state === "closed"; }).length;
+      var pct = taskIssues.length ? Math.round((closedCount / taskIssues.length) * 100) : 0;
+      var state = phaseState(m, issues);
+
+      var card = document.createElement("div");
+      card.className = "phase-card";
+
+      var order = classify(m).order;
+      var head = document.createElement("div");
+      head.className = "phase-head";
+      head.innerHTML =
+        '<span class="phase-num mono">P' + order + '</span>' +
+        '<span class="phase-title">' + escapeHtml(m.title.replace(/^Phase \d+ - /, "")) + '</span>' +
+        '<span class="pill ' + state.pill + '">' + state.label + '</span>';
+      card.appendChild(head);
+
+      var progressRow = document.createElement("div");
+      progressRow.className = "progress-row";
+      progressRow.innerHTML =
+        '<div class="progress-track"><div class="progress-fill" data-pct="' + pct + '" style="background:' +
+          (m.state === "closed" ? "var(--good)" : "var(--warn)") + '"></div></div>' +
+        '<span class="progress-label tnum">' + closedCount + '/' + taskIssues.length + ' tasks</span>';
+      card.appendChild(progressRow);
+
+      var list = document.createElement("div");
+      list.className = "issue-list";
+      if (issues.length) {
+        list.innerHTML = issues
+          .sort(function (a, b) { return a.number - b.number; })
+          .map(issueRowHtml)
+          .join("");
+      } else {
+        list.innerHTML = '<div class="empty-note">No issues filed yet for this phase.</div>';
+      }
+      card.appendChild(list);
+
+      var prs = prsByMilestone[m.number] || [];
+      if (prs.length) {
+        var chains = buildPrChains(prs, defaultBranch);
+        renderPrChains(card, chains, defaultBranch);
+      }
+
+      if (order === 1) {
+        var anyOpenPr = prs.some(function (p) { return p.state === "open"; });
+        var gate = document.createElement("div");
+        if (anyOpenPr) {
+          gate.className = "gate gate-open";
+          gate.innerHTML = "<strong>Gate not yet satisfied.</strong> Per <code>ROADMAP.md</code>, Phase 1's checklist items may all be checked off, but the gate also needs merged PRs and a phase-1 report (<code>docs/REPORTING.md</code>). " + prs.filter(function(p){return p.state==="open";}).length + " PR(s) are still open.";
+        } else if (taskIssues.length && closedCount === taskIssues.length) {
+          gate.className = "gate gate-met";
+          gate.innerHTML = "<strong>All tracked tasks closed.</strong> Confirm the phase-1 report + screenshots exist per <code>REPORTING.md</code> before treating the gate as satisfied.";
+        } else {
+          gate.className = "gate gate-open";
+          gate.innerHTML = "<strong>Gate not yet satisfied.</strong> Work is still in progress.";
+        }
+        card.appendChild(gate);
+      }
+
+      ladder.appendChild(card);
+    });
+
+    requestAnimationFrame(function () {
+      document.querySelectorAll(".progress-fill").forEach(function (el) {
+        el.style.width = el.getAttribute("data-pct") + "%";
+      });
+    });
+  }
+
+  function renderReference(refMilestones) {
+    refMilestones.sort(function (a, b) { return classify(a).order - classify(b).order; });
+    var grid = document.getElementById("ref-grid");
+    grid.innerHTML = refMilestones.map(function (m) {
+      return '<div class="ref-item"><span class="ref-num">#' + m.number + '</span>' + escapeHtml(m.title) +
+        '<span class="chip" style="margin-left:6px;">' + m.open_issues + ' open</span></div>';
+    }).join("");
+  }
+
+  document.getElementById("ref-toggle").addEventListener("click", function () {
+    var btn = this;
+    var expanded = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", String(!expanded));
+    document.getElementById("ref-body").classList.toggle("open", !expanded);
+    btn.querySelector(".caret").textContent = expanded ? "▶" : "▼";
+  });
+
+  // ---------- Load ----------
+  function showError(err) {
+    document.getElementById("error-slot").innerHTML =
+      '<div class="error-box">Couldn\'t load live data: ' + escapeHtml(err.message) +
+      '. This fetches directly from <a href="https://api.github.com" target="_blank" rel="noopener">api.github.com</a> with no auth — if you\'ve hit the 60 req/hr unauthenticated limit, wait and press Refresh, or check your connection.</div>';
+  }
+
+  function load() {
+    var btn = document.getElementById("refresh-btn");
+    btn.disabled = true;
+    btn.classList.add("is-loading");
+    document.getElementById("error-slot").innerHTML = "";
+
+    Promise.all([
+      fetchAllPages(API + "/milestones?state=all&per_page=100"),
+      fetchAllPages(API + "/issues?state=all&per_page=100"),
+      fetchAllPages(API + "/pulls?state=all&per_page=100"),
+      fetch(API).then(function (r) { return r.json(); }),
+    ]).then(function (results) {
+      var milestones = results[0];
+      var rawIssues = results[1].filter(function (i) { return !i.pull_request; });
+      var prs = results[2];
+      var repoInfo = results[3];
+      var defaultBranch = repoInfo.default_branch || "main";
+
+      var mvp = milestones.filter(function (m) { return classify(m).group === "mvp"; });
+      var reference = milestones.filter(function (m) { return classify(m).group === "reference"; });
+
+      var issuesByMilestone = {};
+      rawIssues.forEach(function (i) {
+        if (!i.milestone) return;
+        (issuesByMilestone[i.milestone.number] = issuesByMilestone[i.milestone.number] || []).push(i);
+      });
+
+      var prsByMilestone = {};
+      prs.forEach(function (pr) {
+        if (!pr.milestone) return;
+        (prsByMilestone[pr.milestone.number] = prsByMilestone[pr.milestone.number] || []).push(pr);
+      });
+
+      var mvpIssues = mvp.reduce(function (acc, m) { return acc.concat(issuesByMilestone[m.number] || []); }, []);
+      var mvpPrs = mvp.reduce(function (acc, m) { return acc.concat(prsByMilestone[m.number] || []); }, []);
+
+      renderStats(mvp, mvpIssues, mvpPrs);
+      renderLadder(mvp, issuesByMilestone, prsByMilestone, defaultBranch);
+      renderReference(reference);
+
+      document.getElementById("last-updated").textContent = "Updated " + new Date().toLocaleTimeString();
+    }).catch(showError)
+      .then(function () {
+        btn.disabled = false;
+        btn.classList.remove("is-loading");
+      });
+  }
+
+  document.getElementById("refresh-btn").addEventListener("click", load);
+  load();
+})();
+</script>
+</body>
+</html>
