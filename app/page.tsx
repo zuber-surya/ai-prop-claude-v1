@@ -1,65 +1,166 @@
-import Image from "next/image";
+import Link from "next/link";
+import { listPublishedProperties } from "@/lib/properties";
+import { PropertyCard } from "@/components/PropertyCard";
+import { ArrowRightIcon, SearchIcon } from "@/components/icons";
 
-export default function Home() {
+// Without this, Next.js prerenders the page (and its "featured" query)
+// once at build time, since nothing here uses a request-time API. That
+// would freeze "recently published" listings until the next rebuild.
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const featured = await listPublishedProperties({
+    sort: "date_desc",
+    pageSize: 6,
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      <header className="sticky top-0 z-50 border-b border-outline-variant bg-surface/90 backdrop-blur">
+        <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-4 md:px-10">
+          <Link href="/" className="text-xl font-bold text-on-surface">
+            Property Website
+          </Link>
+          <nav className="flex items-center gap-4">
+            <Link
+              href="/search"
+              className="hidden text-sm text-on-surface-variant transition-colors hover:text-primary md:inline"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Browse listings
+            </Link>
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-on-surface transition-colors hover:text-primary"
             >
-              Learning
-            </a>{" "}
-            center.
+              Sign in
+            </Link>
+            <Link
+              href="/register"
+              className="rounded bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container"
+            >
+              Register
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      <main className="flex-1">
+        <section className="flex flex-col items-center px-4 py-10 text-center">
+          <div className="w-full max-w-3xl">
+            <h1 className="text-4xl font-bold tracking-tight text-on-surface text-balance md:text-5xl">
+              Find your next home
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-lg text-on-surface-variant">
+              Browse listings by location, price, and size - no account
+              needed.
+            </p>
+
+            <form
+              action="/search"
+              method="GET"
+              className="mx-auto mt-10 flex w-full items-center rounded-lg border-2 border-primary bg-surface-container-lowest p-1 shadow-md focus-within:ring-4 focus-within:ring-primary/10"
+            >
+              <SearchIcon className="ml-4 size-5 shrink-0 text-on-surface-variant" />
+              <input
+                type="text"
+                name="q"
+                placeholder="Search by neighborhood or city, e.g. Adajan, Surat"
+                className="min-w-0 flex-1 border-none bg-transparent px-4 py-4 text-base placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-0"
+              />
+              <button
+                type="submit"
+                className="shrink-0 rounded-md bg-primary px-6 py-4 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-container"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[1440px] px-4 py-10 md:px-10">
+          <div className="mb-10 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-on-surface">
+                Featured listings
+              </h2>
+              <p className="text-on-surface-variant">
+                Recently published properties.
+              </p>
+            </div>
+            <Link
+              href="/search"
+              className="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline"
+            >
+              View all
+              <ArrowRightIcon className="size-[18px]" />
+            </Link>
+          </div>
+
+          {featured.results.length === 0 ? (
+            <p className="text-on-surface-variant">
+              No published listings yet - check back soon.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.results.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="bg-surface-container py-10">
+          <div className="mx-auto max-w-[1440px] px-4 text-center md:px-10">
+            <h2 className="mb-10 text-2xl font-bold text-on-surface">
+              How it works
+            </h2>
+            <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+              <HowItWorksStep
+                title="Search"
+                description="Browse listings by location, price, type, and bedrooms."
+              />
+              <HowItWorksStep
+                title="Review the details"
+                description="See photos, specs, amenities, and the map location for any listing."
+              />
+              <HowItWorksStep
+                title="Ask questions"
+                description="Chat with our AI assistant for help narrowing down your search."
+              />
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-outline-variant bg-surface-container-highest">
+        <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-3 px-4 py-6 text-center md:px-10">
+          <span className="font-bold text-on-surface">Property Website</span>
+          <p className="text-sm text-on-surface-variant">
+            <Link href="/search" className="hover:text-on-surface hover:underline">
+              Browse listings
+            </Link>
+            {" · "}
+            <Link href="/login" className="hover:text-on-surface hover:underline">
+              Sign in
+            </Link>
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
+    </>
+  );
+}
+
+function HowItWorksStep({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="flex flex-col items-center">
+      <h3 className="mb-3 text-lg font-semibold text-on-surface">{title}</h3>
+      <p className="max-w-xs text-on-surface-variant">{description}</p>
     </div>
   );
 }
