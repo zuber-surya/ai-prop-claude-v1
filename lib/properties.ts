@@ -119,3 +119,9 @@ export async function listPublishedProperties(
 
   return { results, page, pageSize, total };
 }
+
+export async function getPublishedProperty(id: string) {
+  return prisma.property.findFirst({
+    where: { id, status: "published" },
+  });
+}
