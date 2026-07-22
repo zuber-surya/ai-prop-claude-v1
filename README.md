@@ -47,6 +47,10 @@ All planning docs live in [`docs/`](docs/) and are treated as authoritative by C
 | [`REPORTING.md`](docs/REPORTING.md) | Phase-end report and screenshot requirements |
 | [`UI_REFERENCE.md`](docs/UI_REFERENCE.md) | Design screens, tokens, and screen-to-route mapping (source of truth for what's actually being built — `docs/design_reference/design-references-catalog.md` describes an older, larger CRM scope and should not be used for scope decisions) |
 
+## Build progress
+
+[`progress.html`](progress.html) is a live dashboard of GitHub milestones/issues/PRs — open it in any browser (fetches directly from the public GitHub API, no build step, no token needed).
+
 ## Working in this repo
 
 See [`CLAUDE.md`](CLAUDE.md) for the full set of process rules (branching, commits, PRs, scope-creep policy, Definition of Done). In short: work happens in short-lived `feature/`/`fix/` branches off `main`, every change lands via PR, and no out-of-scope functionality gets built without flagging it first.
