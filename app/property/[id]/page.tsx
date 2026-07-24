@@ -8,6 +8,7 @@ import { EmiCalculator } from "@/components/EmiCalculator";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PropertyMapLoader as PropertyMap } from "@/components/PropertyMapLoader";
 import { AreaIcon, BathIcon, BedIcon, LocationIcon } from "@/components/icons";
+import ChatWidget from "@/components/ChatWidget";
 
 export const dynamic = "force-dynamic";
 
@@ -180,6 +181,8 @@ export default async function PropertyDetailPage({
           ) : null}
         </div>
       </main>
+
+      <ChatWidget />
     </>
   );
 }
