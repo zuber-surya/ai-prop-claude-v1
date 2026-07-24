@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { chatRateLimiter } from '@/lib/rateLimiter';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
@@ -8,6 +9,26 @@ if (!ANTHROPIC_API_KEY) {
 }
 
 export async function POST(request: Request) {
+  // Rate limiting by IP
+  const forwarded = request.headers.get('x-forwarded-for');
+  const ip = forwarded?.split(',')[0].trim() || '127.0.0.1';
+  const rateLimitResult = chatRateLimiter.consume(ip);
+
+  if (!rateLimitResult.success) {
+    return new Response(JSON.stringify({
+      error: {
+        code: 'rate_limit_exceeded',
+        message: 'Too many requests, please try again later.',
+      },
+    }), {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json',
+        'Retry-After': String(rateLimitResult.resetTime - Math.floor(Date.now() / 1000)),
+      },
+    });
+  }
+
   try {
     const { message } = await request.json();
 
