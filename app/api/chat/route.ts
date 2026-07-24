@@ -34,12 +34,14 @@ export async function POST(request: Request) {
 
     if (!anthropicResponse.ok) {
       const errorData = await anthropicResponse.json();
-      // Map Anthropic errors to our format
+      // Log the error for server-side debugging (avoid sending details to client)
+      console.error('Anthropic API error:', errorData);
+      // Map Anthropic errors to our format with a generic message
       return NextResponse.json(
         {
           error: {
             code: 'ai_provider_error',
-            message: errorData.error?.message || 'Failed to get response from AI provider',
+            message: 'Failed to get response from AI provider. Please try again later.',
           },
         },
         { status: 503 }
